@@ -33,6 +33,7 @@ interface CustomProps {
   label?: string;
   placeholder?: string;
   iconSrc?: string;
+  type?: string;
   iconAlt?: string;
   disabled?: boolean;
   dateFormat?: string;
