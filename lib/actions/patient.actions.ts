@@ -14,6 +14,12 @@ import {
 } from "../appwrite.config";
 import { parseStringify } from "../utils";
 
+interface CreateUserParams {
+  email: string;
+  password: string;
+  name: string;
+  phone:string
+}
 // CREATE APPWRITE USER
 export const createUser = async (user: CreateUserParams) => {
   try {
@@ -22,8 +28,8 @@ export const createUser = async (user: CreateUserParams) => {
       ID.unique(),
       user.email,
       user.phone,
-      undefined,
-      user.name
+      user.password,
+      user.name,
     );
 
     return parseStringify(newuser);
