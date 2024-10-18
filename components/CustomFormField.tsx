@@ -2,7 +2,7 @@
 import { E164Number } from "libphonenumber-js/core";
 import Image from "next/image";
 import ReactDatePicker from "react-datepicker";
-import { Control } from "react-hook-form";
+import { Control, Form } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
 
 import { Checkbox } from "./ui/checkbox";
@@ -21,6 +21,7 @@ export enum FormFieldType {
   INPUT = "input",
   TEXTAREA = "textarea",
   PHONE_INPUT = "phoneInput",
+  PASSWORD = "password",
   CHECKBOX = "checkbox",
   DATE_PICKER = "datePicker",
   SELECT = "select",
@@ -90,6 +91,28 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
             className="input-phone"
           />
         </FormControl>
+      );
+    case FormFieldType.PASSWORD:
+      return (
+        <div className="flex rounded-md border border-dark-500 bg-dark-400">
+          {props.iconSrc && (
+            <Image
+              src={props.iconSrc}
+              height={24}
+              width={24}
+              alt={props.iconAlt || "icon"}
+              className="ml-2"
+            />
+          )}
+          <FormControl>
+            <Input
+              type="password" // Set the input type to password
+              placeholder={props.placeholder}
+              {...field}
+              className="shad-input border-0"
+            />
+          </FormControl>
+        </div>
       );
     case FormFieldType.CHECKBOX:
       return (

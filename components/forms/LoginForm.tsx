@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
+import { Form } from "@/components/ui/form";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 
@@ -11,7 +12,7 @@ const LoginForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { handleSubmit, control } = useForm({
+  const form = useForm({
     defaultValues: {
       email: "",
       password: "",
@@ -22,7 +23,6 @@ const LoginForm = () => {
     setIsLoading(true);
 
     try {
-      // Replace with your authentication logic
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
@@ -32,10 +32,8 @@ const LoginForm = () => {
       });
 
       if (response.ok) {
-        // Redirect to the dashboard or another page upon successful login
         router.push("/dashboard");
       } else {
-        // Handle login error
         console.error("Login failed");
       }
     } catch (error) {
@@ -46,39 +44,44 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-full max-w-md">
-      <h1 className="text-2xl font-bold">Login</h1>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full max-w-md">
+        <section className="mb-12 space-y-4">
+          <h1 className="header">Welcome back👋</h1>
+          <p className="text-dark-700">Please login to continue.</p>
+        </section>
 
-      <CustomFormField
-        fieldType={FormFieldType.INPUT}
-        control={control}
-        name="email"
-        label="Email"
-        placeholder="johndoe@gmail.com"
-        iconSrc="/assets/icons/email.svg"
-        iconAlt="email"
-      />
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="email"
+          label="Email"
+          placeholder="johndoe@gmail.com"
+          iconSrc="/assets/icons/email.svg"
+          iconAlt="email"
+        />
 
-      <CustomFormField
-        fieldType={FormFieldType.INPUT}
-        control={control}
-        name="password"
-        label="Password"
-        type="password"
-        placeholder="••••••••"
-        iconSrc="/assets/icons/lock.svg"
-        iconAlt="password"
-      />
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="password"
+          label="Password"
+          type="password"
+          placeholder="••••••••"
+          iconSrc="/assets/icons/password.svg"
+          iconAlt="password"
+        />
 
-      <SubmitButton isLoading={isLoading}>Log In</SubmitButton>
+        <SubmitButton isLoading={isLoading}>Log In</SubmitButton>
 
-      <p className="text-center mt-4">
-        Don't have an account?{" "}
-        <a href="/register" className="text-blue-500 hover:underline">
-          Sign up
-        </a>
-      </p>
-    </form>
+        <p className="text-center mt-4">
+          Don't have an account?{" "}
+          <a href="/" className="text-blue-500 hover:underline">
+            Sign up
+          </a>
+        </p>
+      </form>
+    </Form>
   );
 };
 
