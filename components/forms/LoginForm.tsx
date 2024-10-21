@@ -8,6 +8,7 @@ import { Form } from "@/components/ui/form";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 
+import { loginUser } from "@/lib/actions/login-patient.actions";
 const LoginForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -23,24 +24,20 @@ const LoginForm = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        router.push("/dashboard");
+      const response = await loginUser(data.email, data.password);
+      console.log("Login response:", response); // Log the response
+      if (response) {
+        const userId = response.userId; // Adjust this based on your actual response structure
+        router.push(`/patients/${userId}/new-appointment/success`); // Redirect to the success page
       } else {
         console.error("Login failed");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("An error occurred during login:", error);
+      alert(error.message); // Show the error message to the user
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
