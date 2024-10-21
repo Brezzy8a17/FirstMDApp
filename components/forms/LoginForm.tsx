@@ -9,6 +9,7 @@ import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 
 import { loginUser } from "@/lib/actions/login-patient.actions";
+
 const LoginForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,11 +27,11 @@ const LoginForm = () => {
     try {
       const response = await loginUser(data.email, data.password);
       console.log("Login response:", response); // Log the response
-      if (response) {
-        const userId = response.userId; // Adjust this based on your actual response structure
-        router.push(`/patients/${userId}/new-appointment/success`); // Redirect to the success page
+      if (response && response.userId) { // Ensure the correct property name
+        const userId = response.userId; // Ensure the correct variable name
+        router.push(`/patients/${userId}/dashboard`); // Redirect to the correct dashboard path
       } else {
-        console.error("Login failed");
+        console.error("Login failed or userId not found");
       }
     } catch (error: any) {
       console.error("An error occurred during login:", error);
