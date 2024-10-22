@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
+import { Vortex } from "@/components/ui/vortex";
 
 import { loginUser } from "@/lib/actions/login-patient.actions";
 
@@ -42,6 +43,13 @@ const LoginForm = () => {
   };
 
   return (
+    <Vortex
+        backgroundColor="black"
+        rangeY={900}
+        particleCount={999}
+        baseHue={250} //for pink and purple hue 250; green and blue 150, 5000 = orange and pink, 50 = green and yellow
+        className="flex items-center flex-col justify-center px-2 md:px-10  py-4 w-full h-full"
+      >
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full max-w-md">
         <section className="mb-12 space-y-4">
@@ -80,6 +88,7 @@ const LoginForm = () => {
         </p>
       </form>
     </Form>
+    </Vortex>
   );
 };
 

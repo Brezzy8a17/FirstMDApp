@@ -14,5 +14,11 @@
   "prettier.arrowParens": "always",
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "editor.minimap.enabled": true,
+  "screencastMode.keyboardOptions": {
+    "showKeybindings": false
+  },
+  "zenMode.centerLayout": false,
+  "zenMode.hideActivityBar": false
 }
