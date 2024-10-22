@@ -20,3 +20,17 @@ export const loginUser = async (email: string, password: string) => {
     throw new Error("An unexpected error occurred during login.");
   }
 };
+
+export const logoutUser = async () => {
+  try {
+    // Delete the current session to log out the user
+    await account.deleteSession("current");
+    return { success: true, message: "User successfully logged out" };
+  } catch (error) {
+    console.error("An error occurred during logout:", error);
+    if (error instanceof Error) {
+      throw new Error(`Logout failed: ${error.message}`);
+    }
+    throw new Error("An unexpected error occurred during logout.");
+  }
+};
