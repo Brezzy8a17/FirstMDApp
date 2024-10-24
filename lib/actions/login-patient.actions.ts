@@ -37,29 +37,8 @@ export const logoutUser = async () => {
 };
 
 //retrieve user through their unique ID
-export const getUserData = async () => {
-  try {
-    const data = await databases.listDocuments(
-      DATABASE_ID!,
-      PATIENT_COLLECTION_ID!,
-      [
-        Query.orderDesc("$createdAt"),
-      ]
-    );
-
-    const users = parseStringify(data.documents); // Parse user data
-
-    // Fetch appointments for each user
-    const usersWithAppointments = await Promise.all(users.map(async (user: { userId: string; }) => {
-      const appointments = await getAppointment(user.userId); // Assuming userId is the identifier
-      return {
-        ...user,
-        appointments: appointments ? [appointments] : [], // Wrap in an array if appointments exist
-      };
-    }));
-
-    return usersWithAppointments; // Return users with their appointments
-  } catch (error) {
-    console.log(error);
-  }
+export const getUserData = async() => {
+  try{
+    
+  }catch{}
 }

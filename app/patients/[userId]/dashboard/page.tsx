@@ -8,17 +8,13 @@ import {
   IconSettings,
   IconUserBolt,
 } from "@tabler/icons-react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation'; // Adjusted to import from 'next/navigation'
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useParams } from "next/navigation"; // Import for extracting route parameters
 import { logoutUser } from "@/lib/actions/login-patient.actions";
 import {
   FaStethoscope,
@@ -34,30 +30,18 @@ import {
   FaTachometerAlt,
   FaLungs,
   FaWeight,
-} from "react-icons/fa";
-import dynamic from "next/dynamic";
-// Import and register Chart.js components
+} from 'react-icons/fa';
+import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
-  LineElement,
   CategoryScale,
   LinearScale,
   PointElement,
+  LineElement,
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
-
-ChartJS.register(
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
+} from 'chart.js';
 // Registering the scales
 ChartJS.register(
   CategoryScale,
@@ -68,15 +52,10 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-// Dynamically import 'react-chartjs-2' to prevent SSR issues
-const Line = dynamic(() => import("react-chartjs-2").then((mod) => mod.Line), {
-  ssr: false,
-});
-
 
 import { getUserData } from "@/lib/actions/login-patient.actions";
 export function SidebarDemo() {
-  const router = useRouter(); // For navigation methods like router.push()
+  const router = useRouter(); // Moved router hook here to ensure it's defined before usage
   const [open, setOpen] = useState(false);
 
   const links = [
@@ -107,7 +86,7 @@ export function SidebarDemo() {
       icon: (
         <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
-      onClick: () => handleLogout(),
+      onClick: () => handleLogout(), // Calling handleLogout when this link is clicked
     },
   ];
 
@@ -185,25 +164,23 @@ export const LogoIcon = () => {
   );
 };
 
-// Dashboard Component
 const Dashboard = async () => {
-  const params = useParams(); // Use useParams to get route parameters
+  const params = useParams();
   const { userId } = params;
 
   //getting user data to pass real values 
-  const userData = await getUserData();
-  const userDoc = userData?.find(user => user.userId === userId);
+
+
   // Sample data for charts
   const labResultsData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May"],
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
     datasets: [
       {
-        label: "Cholesterol Levels",
+        label: 'Cholesterol Levels',
         data: [190, 180, 175, 170, 165],
         fill: false,
-        backgroundColor: "#F59E0B",
-        borderColor: "#F59E0B",
-        tension: 0.1,
+        backgroundColor: '#F59E0B',
+        borderColor: '#F59E0B',
       },
     ],
   };
@@ -213,40 +190,53 @@ const Dashboard = async () => {
       {/* Patient Profile */}
       <Card className="flex flex-col md:flex-row p-8 gap-8 bg-white shadow-xl rounded-2xl">
         <div className="flex items-center gap-6">
-          <Image
+          <img
             src="https://via.placeholder.com/150"
             alt="Patient"
-            width={112}
-            height={112}
-            className="rounded-full object-cover border-4 border-primary"
+            className="w-28 h-28 rounded-full object-cover border-4 border-primary"
           />
           <div>
             <h2 className="text-3xl font-extrabold text-gray-800">
-              Welcome, {userDoc ? userDoc.name : "User"}
+              Welcome,
             </h2>
             <p className="text-md text-gray-500">
-              {userDoc ? `${userDoc.age} Yrs, ${userDoc.gender} - ${userDoc.profession}` : "N/A"}
+              
             </p>
-            <span className="text-green-600 font-semibold">Active</span>
+            <span className="text-green-600 font-semibold">
+              Active
+            </span>
           </div>
         </div>
         <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Profile Details */}
           <div>
-            <p className="text-sm text-gray-500">Scheduled Appointment:</p>
-            <p className="font-medium text-gray-700">14 Mar 2021</p>
+            <p className="text-sm text-gray-500">
+              Scheduled Appointment:
+            </p>
+            <p className="font-medium text-gray-700">
+              14 Mar 2021
+            </p>
           </div>
           <div>
             <p className="text-sm text-gray-500">RAMQ:</p>
-            <p className="font-medium text-gray-700">STES 3455 6665</p>
+            <p className="font-medium text-gray-700">
+              STES 3455 6665
+            </p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Referring Doctor:</p>
-            <p className="font-medium text-gray-700">Dr. Chantal Godin</p>
+            <p className="text-sm text-gray-500">
+              Referring Doctor:
+            </p>
+            <p className="font-medium text-gray-700">
+              Dr. Chantal Godin
+            </p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Assigned Doctor:</p>
-            <p className="font-medium text-gray-700">Dr. Audrey Smith</p>
+            <p className="text-sm text-gray-500">
+              Assigned Doctor:
+            </p>
+            <p className="font-medium text-gray-700">
+              Dr. Audrey Smith
+            </p>
           </div>
         </div>
       </Card>
@@ -266,7 +256,9 @@ const Dashboard = async () => {
           </div>
         </div>
         <div className="flex flex-col">
-          <p className="text-sm text-gray-500 mb-3">Consultation Notes:</p>
+          <p className="text-sm text-gray-500 mb-3">
+            Consultation Notes:
+          </p>
           <textarea
             className="border border-gray-300 p-4 rounded-xl w-96 h-24 shadow-sm focus:ring-primary focus:border-primary"
             placeholder="Type here..."
@@ -318,40 +310,197 @@ const Dashboard = async () => {
         </CardHeader>
         <CardContent>
           <div className="mt-6">
-            <Line data={labResultsData}/>
+            <Line data={labResultsData} />
           </div>
         </CardContent>
       </Card>
 
       {/* Medications */}
       <Card className="p-8 bg-white shadow-xl rounded-2xl">
-        {/* ... Medications content ... */}
+        <CardHeader className="flex items-center justify-between">
+          <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
+            <FaPrescriptionBottleAlt className="text-primary mr-3" /> Medications
+          </CardTitle>
+          <button className="flex items-center px-5 py-3 bg-gradient-to-r from-red-400 to-yellow-500 text-white rounded-xl hover:shadow-lg transition-shadow">
+            <FaPlusCircle className="mr-2" /> Add Medication
+          </button>
+        </CardHeader>
+        <CardContent>
+          <ul className="mt-6 space-y-4">
+            <li className="flex items-start">
+              <div className="w-3 h-3 bg-primary rounded-full mt-2 mr-4"></div>
+              <div>
+                <p className="font-medium text-gray-700">
+                  Atorvastatin 10mg - Once daily
+                </p>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <div className="w-3 h-3 bg-primary rounded-full mt-2 mr-4"></div>
+              <div>
+                <p className="font-medium text-gray-700">
+                  Lisinopril 5mg - Once daily
+                </p>
+              </div>
+            </li>
+          </ul>
+        </CardContent>
       </Card>
 
       {/* Allergies */}
       <Card className="p-8 bg-white shadow-xl rounded-2xl">
-        {/* ... Allergies content ... */}
+        <CardHeader className="flex items-center justify-between">
+          <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
+            <FaAllergies className="text-primary mr-3" /> Allergies
+          </CardTitle>
+          <button className="flex items-center px-5 py-3 bg-gradient-to-r from-teal-400 to-blue-500 text-white rounded-xl hover:shadow-lg transition-shadow">
+            <FaPlusCircle className="mr-2" /> Add Allergy
+          </button>
+        </CardHeader>
+        <CardContent>
+          <ul className="mt-6 space-y-4">
+            <li className="flex items-start">
+              <div className="w-3 h-3 bg-primary rounded-full mt-2 mr-4"></div>
+              <div>
+                <p className="font-medium text-gray-700">Penicillin</p>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <div className="w-3 h-3 bg-primary rounded-full mt-2 mr-4"></div>
+              <div>
+                <p className="font-medium text-gray-700">Peanuts</p>
+              </div>
+            </li>
+          </ul>
+        </CardContent>
       </Card>
 
       {/* Upcoming Appointments */}
       <Card className="p-8 bg-white shadow-xl rounded-2xl">
-        {/* ... Upcoming Appointments content ... */}
+        <CardHeader className="flex items-center justify-between">
+          <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
+            <FaCalendarAlt className="text-primary mr-3" /> Upcoming Appointments
+          </CardTitle>
+          <button className="flex items-center px-5 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-xl hover:shadow-lg transition-shadow">
+            <FaPlusCircle className="mr-2" /> Schedule Appointment
+          </button>
+        </CardHeader>
+        <CardContent>
+          <ul className="mt-6 space-y-4">
+            <li className="flex items-start">
+              <div className="w-3 h-3 bg-primary rounded-full mt-2 mr-4"></div>
+              <div>
+                <p className="font-medium text-gray-700">
+                  20 Apr 2021 - Cardiologist Consultation
+                </p>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <div className="w-3 h-3 bg-primary rounded-full mt-2 mr-4"></div>
+              <div>
+                <p className="font-medium text-gray-700">
+                  15 May 2021 - Annual Physical Exam
+                </p>
+              </div>
+            </li>
+          </ul>
+        </CardContent>
       </Card>
 
       {/* Risk Factors */}
       <Card className="p-8 bg-white shadow-xl rounded-2xl">
-        {/* ... Risk Factors content ... */}
+        <CardHeader className="flex items-center justify-between">
+          <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
+            <FaExclamationTriangle className="text-primary mr-3" /> Risk Factors
+          </CardTitle>
+          <button className="flex items-center px-5 py-3 bg-gradient-to-r from-pink-400 to-red-500 text-white rounded-xl hover:shadow-lg transition-shadow">
+            <FaPlusCircle className="mr-2" /> Add Risk Factor
+          </button>
+        </CardHeader>
+        <CardContent>
+          <p className="text-md text-gray-500 mt-6">
+            No risk factors added.
+          </p>
+        </CardContent>
       </Card>
 
       {/* Physical Exam */}
       <Card className="p-8 bg-white shadow-xl rounded-2xl">
-        {/* ... Physical Exam content ... */}
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-gray-800 flex items-center">
+            <FaStethoscope className="text-primary mr-3" /> Physical Exam
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+            <div className="flex items-start">
+              <FaHeartbeat className="text-primary mr-4 mt-1" />
+              <div>
+                <p className="text-sm text-gray-500">Heart</p>
+                <p className="font-medium text-gray-700">
+                  Blockage in left artery
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <FaTachometerAlt className="text-primary mr-4 mt-1" />
+              <div>
+                <p className="text-sm text-gray-500">
+                  Blood Pressure (TA)
+                </p>
+                <p className="font-medium text-gray-700">
+                  120 mm/Hg
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <FaLungs className="text-primary mr-4 mt-1" />
+              <div>
+                <p className="text-sm text-gray-500">Lungs</p>
+                <p className="font-medium text-gray-700">
+                  Congestion in left side of chest
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <FaHeartbeat className="text-primary mr-4 mt-1" />
+              <div>
+                <p className="text-sm text-gray-500">
+                  Heart Rate (FC)
+                </p>
+                <p className="font-medium text-gray-700">
+                  72 / min
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <FaNotesMedical className="text-primary mr-4 mt-1" />
+              <div>
+                <p className="text-sm text-gray-500">Abdomen</p>
+                <p className="font-medium text-gray-700">
+                  Pain on right side
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <FaWeight className="text-primary mr-4 mt-1" />
+              <div>
+                <p className="text-sm text-gray-500">
+                  Weight (Poids)
+                </p>
+                <p className="font-medium text-gray-700">
+                  71.6 Kg
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
       </Card>
     </div>
   </div>
   );
 } 
 
+
+
 export default SidebarDemo;
-
-
