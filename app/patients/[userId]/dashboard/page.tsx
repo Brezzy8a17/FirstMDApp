@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
+import { Sidebar, SidebarBody, SidebarLink} from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 import {
   IconArrowLeft,
   IconBrandTabler,
@@ -19,7 +20,6 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useParams } from "next/navigation";
 import { logoutUser } from "@/lib/actions/login-patient.actions";
 import {
   FaStethoscope,
@@ -31,9 +31,6 @@ import {
   FaAllergies,
   FaCalendarAlt,
   FaHeartbeat,
-  FaTachometerAlt,
-  FaLungs,
-  FaWeight,
 } from "react-icons/fa";
 import { Line } from "react-chartjs-2";
 import {
@@ -48,6 +45,7 @@ import {
   Legend,
 } from "chart.js";
 import ReactDOM from "react-dom";
+import { Calendar } from "@/components/ui/calendar";
 
 // Registering the scales
 ChartJS.register(
@@ -59,37 +57,36 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-import PatientDashboard from "./PatientDashboard";
-import { getUserData } from "@/lib/actions/login-patient.actions";
-export  function SidebarDemo() {
+
+export function SidebarDemo() {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
+  const [activeComponent, setActiveComponent] = useState<string>("dashboard");
 
   const links = [
     {
       label: "Dashboard",
-      href: "#",
       icon: (
         <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
+      onClick: () => setActiveComponent("dashboard"),
     },
     {
       label: "Profile",
-      href: "#",
       icon: (
         <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
+      onClick: () => setActiveComponent("profile"),
     },
     {
       label: "Settings",
-      href: "#",
       icon: (
         <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
+      onClick: () => setActiveComponent("settings"),
     },
     {
       label: "Logout",
-      href: "/login",
       icon: (
         <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
@@ -121,8 +118,7 @@ export  function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: "Manu Arora",
-                href: "#",
+                label: "",
                 icon: (
                   <Image
                     src="/assets/icons/user.svg"
@@ -137,7 +133,11 @@ export  function SidebarDemo() {
           </div>
         </SidebarBody>
       </Sidebar>
-      <Dashboard />
+      <div className="flex-1 overflow-y-auto">
+        {activeComponent === "dashboard" && <Dashboard />}
+        {activeComponent === "profile" && <Profile />}
+        {activeComponent === "settings" && <Settings />}
+      </div>
     </div>
   );
 }
@@ -171,19 +171,381 @@ export const LogoIcon: React.FC = () => {
   );
 };
 
-const Dashboard: React.FC = async () => {
-  const params = useParams();
-  const [userData, setUserData] = useState(null);
-  const { userId } = params as { userId: string };
+// SidebarLink Component (Ensure this is updated in your components)
+// Profile Component
+const Profile: React.FC = () => {
+  // Sample user data
+  const [user, setUser] = useState({
+    name: "John Doe",
+    dateOfBirth: "1990-01-01",
+    gender: "Male",
+    email: "john.doe@example.com",
+    phone: "+1 (555) 123-4567",
+    address: "123 Main Street, City, Country",
+    bio: "Patient at FirstMD with a keen interest in maintaining good health.",
+    avatar: "/assets/icons/user.svg",
+    insuranceProvider: "HealthPlus Insurance",
+    policyNumber: "HP-123456789",
+    groupNumber: "GP-987654321",
+    emergencyContact: {
+      name: "Jane Doe",
+      relationship: "Spouse",
+      phone: "+1 (555) 987-6543",
+    },
+  });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const userData = await getUserData();
-      setUserData(userData);
-    };
+  const [isEditing, setIsEditing] = useState<boolean>(false);
 
-    fetchData();
-  }, []);
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+  };
+
+  const handleEmergencyContactChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+    setUser((prevUser) => ({
+      ...prevUser,
+      emergencyContact: {
+        ...prevUser.emergencyContact,
+        [name]: value,
+      },
+    }));
+  };
+
+  const handleSave = () => {
+    // Save user data logic here (e.g., API call)
+    setIsEditing(false);
+    alert("Profile updated successfully!");
+  };
+
+  return (
+    <div className="flex-1 p-6 bg-gray-900 text-white overflow-y-auto">
+      <Card className="p-6 bg-gray-800 rounded-lg shadow-lg">
+        <div className="flex items-center space-x-6">
+          <Image
+            src={user.avatar}
+            className="h-24 w-24 rounded-full"
+            width={96}
+            height={96}
+            alt="User Avatar"
+          />
+          <div>
+            {isEditing ? (
+              <input
+                type="text"
+                name="name"
+                value={user.name}
+                onChange={handleInputChange}
+                className="bg-gray-700 text-white p-2 rounded"
+              />
+            ) : (
+              <h2 className="text-3xl font-bold">{user.name}</h2>
+            )}
+            {isEditing ? (
+              <input
+                type="email"
+                name="email"
+                value={user.email}
+                onChange={handleInputChange}
+                className="bg-gray-700 text-white p-2 rounded mt-2"
+              />
+            ) : (
+              <p className="text-gray-400">{user.email}</p>
+            )}
+            {isEditing ? (
+              <input
+                type="text"
+                name="phone"
+                value={user.phone}
+                onChange={handleInputChange}
+                className="bg-gray-700 text-white p-2 rounded mt-2"
+              />
+            ) : (
+              <p className="text-gray-400">{user.phone}</p>
+            )}
+          </div>
+        </div>
+        <div className="mt-6">
+          <h3 className="text-xl font-semibold">Personal Information</h3>
+          {isEditing ? (
+            <div className="space-y-2 mt-2">
+              <div>
+                <label className="block text-gray-300">Date of Birth</label>
+                <input
+                  type="date"
+                  name="dateOfBirth"
+                  value={user.dateOfBirth}
+                  onChange={handleInputChange}
+                  className="bg-gray-700 text-white p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-300">Gender</label>
+                <select
+                  name="gender"
+                  value={user.gender}
+                  
+                  className="bg-gray-700 text-white p-2 rounded w-full"
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-gray-300">Address</label>
+                <input
+                  type="text"
+                  name="address"
+                  value={user.address}
+                  onChange={handleInputChange}
+                  className="bg-gray-700 text-white p-2 rounded w-full"
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="mt-2 text-gray-300 space-y-1">
+              <p>Date of Birth: {user.dateOfBirth}</p>
+              <p>Gender: {user.gender}</p>
+              <p>Address: {user.address}</p>
+            </div>
+          )}
+        </div>
+        {/* Rest of the Profile component remains the same */}
+        {/* ... */}
+        <div className="mt-6 flex justify-end">
+          {isEditing ? (
+            <>
+              <Button
+                onClick={() => setIsEditing(false)}
+                className="bg-red-600 mr-2"
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleSave} className="bg-green-600">
+                Save Changes
+              </Button>
+            </>
+          ) : (
+            <Button onClick={() => setIsEditing(true)} className="bg-blue-600">
+              Edit Profile
+            </Button>
+          )}
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+//ADDED SETTINGS
+
+
+const Settings: React.FC = () => {
+  // State variables for settings
+  const [emailNotifications, setEmailNotifications] = useState<boolean>(true);
+  const [smsNotifications, setSmsNotifications] = useState<boolean>(false);
+  const [appointmentReminders, setAppointmentReminders] = useState<boolean>(true);
+  const [labResultsNotifications, setLabResultsNotifications] =
+    useState<boolean>(true);
+  const [privacySettings, setPrivacySettings] = useState<string>("private");
+  const [language, setLanguage] = useState<string>("en");
+  const [currentPassword, setCurrentPassword] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+
+  const handleSaveSettings = () => {
+    // Save settings logic
+    alert("Settings saved successfully!");
+  };
+
+  const handleChangePassword = () => {
+    if (newPassword === confirmPassword) {
+      // Change password logic
+      alert("Password changed successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } else {
+      alert("New passwords do not match.");
+    }
+  };
+
+  return (
+    <div className="flex-1 p-6 bg-gray-900 text-white overflow-y-auto">
+      <Card className="p-6 bg-gray-800 rounded-lg shadow-lg">
+        <h2 className="text-3xl font-bold mb-6">Settings</h2>
+        <div className="space-y-6">
+          {/* Notifications */}
+          <div>
+            <h3 className="text-xl font-semibold">Notifications</h3>
+            <div className="mt-2 space-y-2">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={emailNotifications}
+                  onChange={(e) => setEmailNotifications(e.target.checked)}
+                  className="form-checkbox h-5 w-5 text-blue-600"
+                />
+                <span className="ml-2 text-gray-300">Email Notifications</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={smsNotifications}
+                  onChange={(e) => setSmsNotifications(e.target.checked)}
+                  className="form-checkbox h-5 w-5 text-blue-600"
+                />
+                <span className="ml-2 text-gray-300">SMS Notifications</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={appointmentReminders}
+                  onChange={(e) => setAppointmentReminders(e.target.checked)}
+                  className="form-checkbox h-5 w-5 text-blue-600"
+                />
+                <span className="ml-2 text-gray-300">Appointment Reminders</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={labResultsNotifications}
+                  onChange={(e) => setLabResultsNotifications(e.target.checked)}
+                  className="form-checkbox h-5 w-5 text-blue-600"
+                />
+                <span className="ml-2 text-gray-300">
+                  Lab Results Notifications
+                </span>
+              </label>
+            </div>
+          </div>
+          {/* Privacy Settings */}
+          <div>
+            <h3 className="text-xl font-semibold">Privacy Settings</h3>
+            <div className="mt-2">
+              <label className="block">
+                <span className="text-gray-300">Data Sharing Preferences</span>
+                <select
+                  value={privacySettings}
+                  onChange={(e) => setPrivacySettings(e.target.value)}
+                  className="mt-1 block w-full bg-gray-700 text-white p-2 rounded"
+                >
+                  <option value="private">Private</option>
+                  <option value="share_with_providers">
+                    Share with Healthcare Providers
+                  </option>
+                  <option value="public">Public</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          {/* Account Security */}
+          <div>
+            <h3 className="text-xl font-semibold">Account Security</h3>
+            <div className="mt-2 space-y-2">
+              <div>
+                <label className="block text-gray-300">Current Password</label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  className="bg-gray-700 text-white p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-300">New Password</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="bg-gray-700 text-white p-2 rounded w-full"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-300">Confirm New Password</label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="bg-gray-700 text-white p-2 rounded w-full"
+                />
+              </div>
+              <Button onClick={handleChangePassword} className="mt-2 bg-blue-600">
+                Change Password
+              </Button>
+            </div>
+          </div>
+          {/* Language Preferences */}
+          <div>
+            <h3 className="text-xl font-semibold">Language Preferences</h3>
+            <div className="mt-2">
+              <label className="block">
+                <span className="text-gray-300">Language</span>
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value)}
+                  className="mt-1 block w-full bg-gray-700 text-white p-2 rounded"
+                >
+                  <option value="en">English</option>
+                  <option value="es">Spanish</option>
+                  {/* Add more language options as needed */}
+                </select>
+              </label>
+            </div>
+          </div>
+          {/* Download Medical Records */}
+          <div>
+            <h3 className="text-xl font-semibold">Medical Records</h3>
+            <div className="mt-2">
+              <Button
+                onClick={() => alert("Downloading medical records...")}
+                className="bg-green-600"
+              >
+                Download Medical Records
+              </Button>
+            </div>
+          </div>
+          <Button onClick={handleSaveSettings} className="mt-4 bg-green-600">
+            Save Settings
+          </Button>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
+
+
+
+
+
+
+
+const Dashboard: React.FC = () => {
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date())
+  const [appointments, setAppointments] = useState<{ date: Date; title: string }[]>([])
+  const [showForm, setShowForm] = useState(false)
+  const [newAppointmentTitle, setNewAppointmentTitle] = useState("")
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date)
+    setShowForm(true)
+  }
+
+  const handleAddAppointment = () => {
+    if (selectedDate && newAppointmentTitle) {
+      setAppointments([...appointments, { date: selectedDate, title: newAppointmentTitle }])
+      setNewAppointmentTitle("")
+      setShowForm(false)
+    }
+  }
 
   return (
     <div className="flex flex-1 flex-col p-6 gap-8 bg-gray-900 text-white overflow-y-auto">
@@ -196,7 +558,6 @@ const Dashboard: React.FC = async () => {
               <FaCloudSun size={36} />
             </div>
             <div>
-              <PatientDashboard userName={userData?.userName || "Guest"} />
               <p className="text-sm text-gray-400 mt-1">24°C, Sunny</p>
             </div>
           </div>
@@ -228,9 +589,60 @@ const Dashboard: React.FC = async () => {
           <PatientOverview />
         </CardContent>
       </Card>
+
+      {/* Enhanced Calendar Section */}
+      <Card className="p-8 bg-gray-800 text-white rounded-2xl shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold flex items-center">
+            <FaCalendarAlt className="mr-2" />
+            Appointment Calendar
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={handleDateSelect}
+              className="rounded-md border border-gray-600"
+              classNames={{
+                day_today: "bg-blue-600 text-white",
+                day_selected: "bg-green-600 text-white",
+                day_outside: "text-gray-400 opacity-50",
+              }}
+            />
+            {showForm && (
+              <div className="mt-4 p-4 bg-gray-700 rounded-md">
+                <h3 className="text-lg font-semibold mb-2">Add Appointment</h3>
+                <input
+                  type="text"
+                  value={newAppointmentTitle}
+                  onChange={(e) => setNewAppointmentTitle(e.target.value)}
+                  placeholder="Appointment Title"
+                  className="w-full p-2 mb-2 bg-gray-600 text-white rounded"
+                />
+                <Button onClick={handleAddAppointment} className="w-full">
+                  Add Appointment
+                </Button>
+              </div>
+            )}
+            <div className="mt-4">
+              <h3 className="text-lg font-semibold mb-2">Upcoming Appointments</h3>
+              {appointments.map((appointment, index) => (
+                <div key={index} className="mb-2 p-2 bg-gray-700 rounded-md">
+                  <p className="font-semibold">{appointment.title}</p>
+                  <p className="text-sm text-gray-400">
+                    {appointment.date.toLocaleDateString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
-  );
-};
+  )
+}
 
 interface PatientOverviewProps {}
 
@@ -698,6 +1110,50 @@ const Modal: React.FC<ModalProps> = ({ children, onClose }) => {
       </div>
     </div>,
     modalRoot
+  );
+};
+
+interface CalendarFormProps {
+  onSave: (date: Date | undefined) => void;
+  onClose: () => void;
+}
+
+const CalendarForm: React.FC<CalendarFormProps> = ({ onSave, onClose }) => {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+
+  const handleSave = () => {
+    onSave(date);
+    onClose();
+  };
+
+  return (
+    <Card className="p-6 bg-gray-800 rounded-lg shadow-lg">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold text-white">Select a Date</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={setDate}
+          className="rounded-md border bg-white"
+        />
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-red-600 text-white rounded mr-2"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className="px-4 py-2 bg-green-600 text-white rounded"
+          >
+            Save
+          </button>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

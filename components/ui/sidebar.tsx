@@ -7,8 +7,9 @@ import { IconMenu2, IconX } from "@tabler/icons-react";
 
 interface Links {
   label: string;
-  href: string;
+  href?: string; // Made href optional
   icon: React.JSX.Element | React.ReactNode;
+  onClick?: () => void; // Added onClick as optional
 }
 
 interface SidebarContextProps {
@@ -89,7 +90,7 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0",
+          "h-full px-4 py-4 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0",
           className
         )}
         animate={{
@@ -115,7 +116,7 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden  items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
+          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
         )}
         {...props}
       >
@@ -162,20 +163,12 @@ export const SidebarLink = ({
 }: {
   link: Links;
   className?: string;
-  props?: LinkProps;
 }) => {
   const { open, animate } = useSidebar();
-  return (
-    <Link
-      href={link.href}
-      className={cn(
-        "flex items-center justify-start gap-2  group/sidebar py-2",
-        className
-      )}
-      {...props}
-    >
-      {link.icon}
 
+  const content = (
+    <>
+      {link.icon}
       <motion.span
         animate={{
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
@@ -185,6 +178,34 @@ export const SidebarLink = ({
       >
         {link.label}
       </motion.span>
-    </Link>
+    </>
   );
+
+  if (link.onClick) {
+    return (
+      <button
+        onClick={link.onClick}
+        className={cn(
+          "flex items-center justify-start gap-2 group/sidebar py-2 text-left w-full",
+          className
+        )}
+        {...props}
+      >
+        {content}
+      </button>
+    );
+  } else {
+    return (
+      <Link
+        href={link.href || "#"}
+        className={cn(
+          "flex items-center justify-start gap-2 group/sidebar py-2",
+          className
+        )}
+        {...props}
+      >
+        {content}
+      </Link>
+    );
+  }
 };
