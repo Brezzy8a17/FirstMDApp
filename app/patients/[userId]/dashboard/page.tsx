@@ -176,19 +176,19 @@ export const LogoIcon: React.FC = () => {
 const Profile: React.FC = () => {
   // Sample user data
   const [user, setUser] = useState({
-    name: "John Doe",
+    name: "Brad Pitt",
     dateOfBirth: "1990-01-01",
     gender: "Male",
-    email: "john.doe@example.com",
+    email: "brad-pitt@gmail.com",
     phone: "+1 (555) 123-4567",
-    address: "123 Main Street, City, Country",
+    address: "123 Beverly Hills, LA, California",
     bio: "Patient at FirstMD with a keen interest in maintaining good health.",
     avatar: "/assets/icons/user.svg",
     insuranceProvider: "HealthPlus Insurance",
     policyNumber: "HP-123456789",
     groupNumber: "GP-987654321",
     emergencyContact: {
-      name: "Jane Doe",
+      name: "Angelina Jolie",
       relationship: "Spouse",
       phone: "+1 (555) 987-6543",
     },
