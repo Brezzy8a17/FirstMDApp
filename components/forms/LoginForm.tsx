@@ -47,7 +47,7 @@ const LoginForm = () => {
         backgroundColor="black"
         rangeY={900}
         particleCount={999}
-        baseHue={250} //for pink and purple hue 250; green and blue 150, 5000 = orange and pink, 50 = green and yellow
+        baseHue={150} //for pink and purple hue 250; green and blue 150, 5000 = orange and pink, 50 = green and yellow
         className="flex items-center flex-col justify-center px-2 md:px-10  py-4 w-full h-full"
       >
     <Form {...form}>
