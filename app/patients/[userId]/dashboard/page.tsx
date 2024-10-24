@@ -32,7 +32,29 @@ import {
   FaWeight,
 } from 'react-icons/fa';
 import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
+// Registering the scales
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+import { getUserData } from "@/lib/actions/login-patient.actions";
 export function SidebarDemo() {
   const router = useRouter(); // Moved router hook here to ensure it's defined before usage
   const [open, setOpen] = useState(false);
@@ -143,15 +165,13 @@ export const LogoIcon = () => {
   );
 };
 
-// Dummy dashboard component with scrollable content
-
-// Adjust the import based on your project structure
-
-
-const Dashboard = () => {
+const Dashboard = async () => {
   const params = useParams();
   const { userId } = params;
 
+  //getting user data to pass real values 
+  const userData = await getUserData();
+  const userDoc = userData?.find(user => user.userId === userId);
   // Sample data for charts
   const labResultsData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
@@ -165,8 +185,8 @@ const Dashboard = () => {
       },
     ],
   };
-
-  return (
+  return(
+    <div className="flex flex-1 flex-col p-6 gap-8 bg-gradient-to-b from-blue-50 to-white overflow-y-auto">
     <div className="flex flex-1 flex-col p-6 gap-8 bg-gradient-to-b from-blue-50 to-white">
       {/* Patient Profile */}
       <Card className="flex flex-col md:flex-row p-8 gap-8 bg-white shadow-xl rounded-2xl">
@@ -178,10 +198,10 @@ const Dashboard = () => {
           />
           <div>
             <h2 className="text-3xl font-extrabold text-gray-800">
-              Jessica Alexander
+              Welcome, {userDoc ? userDoc.name : "User"}
             </h2>
             <p className="text-md text-gray-500">
-              29 Yrs, Female - Engineer
+              {userDoc ? `${userDoc.age} Yrs, ${userDoc.gender} - ${userDoc.profession}` : "N/A"}
             </p>
             <span className="text-green-600 font-semibold">
               Active
@@ -478,9 +498,12 @@ const Dashboard = () => {
         </CardContent>
       </Card>
     </div>
+  </div>
   );
-};
+} 
 
 
 
 export default SidebarDemo;
+
+
