@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import {
   IconArrowLeft,
@@ -59,7 +59,8 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
+import PatientDashboard from "./PatientDashboard";
+import { getUserData } from "@/lib/actions/login-patient.actions";
 export  function SidebarDemo() {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
@@ -170,9 +171,19 @@ export const LogoIcon: React.FC = () => {
   );
 };
 
-const Dashboard: React.FC = () => {
+const Dashboard: React.FC = async () => {
   const params = useParams();
+  const [userData, setUserData] = useState(null);
   const { userId } = params as { userId: string };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const userData = await getUserData();
+      setUserData(userData);
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-1 flex-col p-6 gap-8 bg-gray-900 text-white overflow-y-auto">
@@ -185,8 +196,7 @@ const Dashboard: React.FC = () => {
               <FaCloudSun size={36} />
             </div>
             <div>
-              <p className="text-lg font-bold">Good Morning,</p>
-              <p className="text-2xl font-bold">Dr. Audrey Graham</p>
+              <PatientDashboard userName={userData?.userName || "Guest"} />
               <p className="text-sm text-gray-400 mt-1">24°C, Sunny</p>
             </div>
           </div>
